@@ -1008,9 +1008,26 @@ strong { font-weight: 600; }
   }
   .ok-tools-grid::-webkit-scrollbar { display: none; }
   .ok-tool-card {
-    min-width: 140px;
+    min-width: 130px;
     flex-shrink: 0;
     scroll-snap-align: start;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+  .ok-tool-card__icon {
+    font-size: 1.5rem;
+  }
+  .ok-tool-card__info strong {
+    font-size: 0.85rem;
+    white-space: normal;
+    line-height: 1.3;
+  }
+  .ok-tool-card__info span {
+    font-size: 0.75rem;
+    white-space: normal;
+    line-height: 1.3;
   }
   .ok-cover__content { flex-direction: column; text-align: center; }
   .ok-cover__stats { justify-content: center; }

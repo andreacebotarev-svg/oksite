@@ -370,11 +370,18 @@ strong { font-weight: 600; }
   background: var(--ok);
   color: #fff;
   box-shadow: 0 2px 8px rgba(238,130,8,0.3);
+  animation: solarPulseBtn 2s infinite;
 }
 .ok-btn--primary:hover {
   background: var(--ok-hover);
   transform: translateY(-1px);
   color: #fff;
+  animation: none;
+}
+@keyframes solarPulseBtn {
+  0% { box-shadow: 0 0 0 0 rgba(238, 130, 8, 0.6); }
+  70% { box-shadow: 0 0 0 12px rgba(238, 130, 8, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(238, 130, 8, 0); }
 }
 .ok-btn--ghost {
   background: #fff;
@@ -1099,6 +1106,13 @@ strong { font-weight: 600; }
   color: #fff;
 }
 
+.ok-btn--outline-orange {
+  animation: solarPulseBtn 2s infinite;
+}
+.ok-btn--outline-orange:hover {
+  animation: none;
+}
+
 /* Filled button for VIP card */
 .ok-btn--primary-orange {
   display: block;
@@ -1116,11 +1130,13 @@ strong { font-weight: 600; }
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(238,130,8,0.25);
   cursor: pointer;
+  animation: solarPulseBtn 2s infinite;
 }
 .ok-btn--primary-orange:hover {
   background: #d87304;
   border-color: #d87304;
   color: #fff;
+  animation: none;
 }
 
 .badge-accent {

@@ -50,7 +50,8 @@ class OKEnglishAssistant {
                 </svg>
             </button>
             <div class="chat-window" id="chatWindow">
-                <div class="chat-header">
+                <div class="chat-header" id="chatHeader">
+                    <div class="chat-swipe-handle mobile-only-handle"></div>
                     <div style="display:flex; align-items:center; gap:12px; flex:1;">
                         <div class="status-dot"></div>
                         <h3>Виртуальный помощник</h3>
@@ -109,7 +110,7 @@ class OKEnglishAssistant {
       btnLeaveRequest: document.getElementById("btnLeaveRequest"),
       swipeAreaBottom: document.getElementById("swipeAreaBottom"),
       inputArea: widget.querySelector(".chat-input-area"),
-      header: widget.querySelector(".chat-header"),
+      header: widget.querySelector("#chatHeader"),
     };
 
     this.renderSuggestions(this.suggestions.initial);
@@ -120,45 +121,38 @@ class OKEnglishAssistant {
     let startY = 0;
     let currentY = 0;
     let isDragging = false;
-    let isAtTop = false;
-    let isAtBottom = false;
 
     const handleTouchStart = (e) => {
         if (window.innerWidth > 600) return;
+        // Only allow drag starting from the header or swipe area
+        if (!this.elements.header.contains(e.target) && (!this.elements.swipeAreaBottom || !this.elements.swipeAreaBottom.contains(e.target))) {
+            return;
+        }
 
         const touch = e.touches[0];
         startY = touch.clientY;
-        
-        const el = this.elements.messages;
-        const scrollBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-        isAtTop = el.scrollTop <= 5;
-        isAtBottom = scrollBottom <= 10;
-        
-        if (this.elements.header.contains(e.target)) isAtTop = true;
-        if (this.elements.swipeAreaBottom && this.elements.swipeAreaBottom.contains(e.target)) isAtBottom = true;
-        if (this.elements.suggestions.contains(e.target) || this.elements.inputArea.contains(e.target)) isAtBottom = true; 
-
         isDragging = false;
     };
 
     const handleTouchMove = (e) => {
         if (window.innerWidth > 600) return;
+        // Proceed only if we started on the header
+        if (!this.elements.header.contains(e.target) && (!this.elements.swipeAreaBottom || !this.elements.swipeAreaBottom.contains(e.target))) {
+            return;
+        }
 
         const touch = e.touches[0];
         currentY = touch.clientY;
         const diff = currentY - startY; 
 
-        let allowDrag = false;
-        if (diff > 0 && isAtTop) allowDrag = true;
-        if (diff < 0 && isAtBottom) allowDrag = true;
-
-        if (allowDrag) {
-            e.preventDefault(); 
+        // Allow dragging down
+        if (diff > 10) {
+            if(e.cancelable) e.preventDefault(); 
             isDragging = true;
             this.elements.window.classList.add('is-dragging');
-            const opacity = 1 - (Math.abs(diff) / 700); 
+            const opacity = 1 - (diff / (window.innerHeight * 0.8)); 
             this.elements.window.style.transform = `translateY(${diff}px)`;
-            this.elements.window.style.opacity = opacity;
+            this.elements.window.style.opacity = Math.max(0, opacity);
         }
     };
 
@@ -170,16 +164,11 @@ class OKEnglishAssistant {
         isDragging = false;
 
         const diff = currentY - startY;
-        const threshold = 150;
+        const threshold = 120;
 
-        if (Math.abs(diff) > threshold) {
-            if (diff < 0) {
-                const leadForm = document.getElementById('lead');
-                if (leadForm) leadForm.scrollIntoView({ behavior: 'smooth' });
-            }
-
-            this.elements.window.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease';
-            this.elements.window.style.transform = `translateY(${diff > 0 ? '100dvh' : '-100dvh'})`;
+        if (diff > threshold) {
+            this.elements.window.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease';
+            this.elements.window.style.transform = `translateY(100dvh)`;
             this.elements.window.style.opacity = '0';
             
             setTimeout(() => {

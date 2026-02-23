@@ -1233,6 +1233,11 @@ strong { font-weight: 600; }
   .ok-modal-drag-handle {
     display: block; /* Show handle on mobile */
   }
+  .platform-modal-content {
+    height: 100dvh !important;
+    max-height: none !important;
+    border-radius: 16px 16px 0 0 !important;
+  }
   
   @keyframes modalSlideUp {
     from { opacity: 0; transform: translateY(100%); }

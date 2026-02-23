@@ -1263,21 +1263,46 @@ strong { font-weight: 600; }
   }
 
   .ok-pricing-grid {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
     padding-bottom: 20px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
   }
-  .ok-pricing-grid::-webkit-scrollbar { display: none; }
   .ok-price-card {
-    min-width: 80%;
-    max-width: 300px;
-    scroll-snap-align: center;
-    flex-shrink: 0;
+    min-width: 0;
+    max-width: none;
+    flex-shrink: 1;
   }
+  
+  /* Compact sizes for 2x2 mobile pricing cards */
+  .ok-price-card__header {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  .ok-price-card__content {
+    padding: 12px;
+  }
+  .ok-price-card__content h3 {
+    margin: 0 0 10px 0;
+    font-size: 0.95rem;
+  }
+  .ok-price-card__prices {
+    margin-bottom: 10px;
+  }
+  .ok-price-card__old-price {
+    font-size: 0.75rem;
+  }
+  .ok-price-card__current-price {
+    font-size: 1.25rem;
+  }
+  .ok-price-card__price-note {
+    font-size: 0.65rem;
+  }
+  .ok-price-card__desc {
+    font-size: 0.75rem;
+    margin-bottom: 12px;
+  }
+  
   .ok-card-vip { transform: none; }
   .ok-card-vip:hover { transform: translateY(-4px); }
 }

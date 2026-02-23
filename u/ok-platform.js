@@ -1,27 +1,29 @@
 /**
  * ok-platform.js — Dedicated platform modal for /u/ directory
  * Android-style swipe up/down to dismiss.
- * Uses touch-action: pan-x on the modal so the browser handles
- * horizontal scrolling natively, while we capture vertical gestures.
+ *
+ * APPROACH: The iframe absorbs ALL touch events, so we can't listen
+ * on the content wrapper. Instead we:
+ * 1. Listen on the HEADER (drag-handle area) for swipe initiation
+ * 2. Once dragging starts, set pointer-events:none on the iframe
+ *    so ALL subsequent touch events reach our content handler
+ * 3. On touchend, restore pointer-events and decide: dismiss or snap back
  */
 
 (function () {
   'use strict';
 
-  // ── Open / Close ──────────────────────────────────────────
-
   window.openSpokePreview = function (url, title) {
     if (!url) return;
     title = title || 'Пример';
 
-    const modal   = document.getElementById('platformModal');
-    const iframe  = document.getElementById('platformIframe');
-    const content = modal && modal.querySelector('.platform-modal-content');
-    const titleEl = document.getElementById('platformModalTitle');
+    var modal   = document.getElementById('platformModal');
+    var iframe  = document.getElementById('platformIframe');
+    var content = modal && modal.querySelector('.platform-modal-content');
+    var titleEl = document.getElementById('platformModalTitle');
 
     if (!modal || !iframe || !content) return;
 
-    // Reset transforms
     content.style.transform  = '';
     content.style.transition = '';
     modal.style.opacity = '';
@@ -34,10 +36,10 @@
   };
 
   window.closePlatformPreview = function () {
-    const modal   = document.getElementById('platformModal');
-    const iframe  = document.getElementById('platformIframe');
+    var modal   = document.getElementById('platformModal');
+    var iframe  = document.getElementById('platformIframe');
     if (!modal || !iframe) return;
-    const content = modal.querySelector('.platform-modal-content');
+    var content = modal.querySelector('.platform-modal-content');
 
     iframe.src = '';
     modal.style.display = 'none';
@@ -49,15 +51,14 @@
     }
   };
 
-  // ── Init on DOMContentLoaded ──────────────────────────────
-
   document.addEventListener('DOMContentLoaded', function () {
-    const modal = document.getElementById('platformModal');
+    var modal = document.getElementById('platformModal');
     if (!modal) return;
 
-    const content  = modal.querySelector('.platform-modal-content');
-    const header   = modal.querySelector('.ok-modal-header');
-    if (!content) return;
+    var content = modal.querySelector('.platform-modal-content');
+    var header  = modal.querySelector('.ok-modal-header');
+    var iframe  = document.getElementById('platformIframe');
+    if (!content || !header) return;
 
     // Close on backdrop click
     modal.addEventListener('click', function (e) {
@@ -82,84 +83,94 @@
       if (e.data === 'closeModal') closePlatformPreview();
     });
 
-    // ── Android-style swipe-to-dismiss ────────────────────
+    // ── SWIPE-TO-DISMISS ──────────────────────────────────
 
-    // Key insight: set touch-action: pan-x on the content so the browser
-    // handles horizontal scrolling natively, while we handle Y-axis manually.
-    // This eliminates the OX/OY conflict that was blocking swipe.
-    content.style.touchAction = 'pan-x';
+    var startY   = 0;
+    var currentY = 0;
+    var dragging = false;
 
-    var startY     = 0;
-    var currentY   = 0;
-    var dragging   = false;
-    var dirLocked  = false; // true once we decide vertical vs horizontal
-    var isVertical = false;
-    var startX     = 0;
-    var currentX   = 0;
-
-    content.addEventListener('touchstart', function (e) {
-      startY     = e.touches[0].clientY;
-      startX     = e.touches[0].clientX;
-      currentY   = startY;
-      currentX   = startX;
-      dragging   = false;
-      dirLocked  = false;
-      isVertical = false;
+    // HEADER touchstart — start tracking
+    header.addEventListener('touchstart', function (e) {
+      startY   = e.touches[0].clientY;
+      currentY = startY;
+      dragging = false;
     }, { passive: true });
 
-    content.addEventListener('touchmove', function (e) {
+    // HEADER touchmove — if moving vertically, start dragging
+    // and disable iframe pointer-events so we capture future moves
+    header.addEventListener('touchmove', function (e) {
       currentY = e.touches[0].clientY;
-      currentX = e.touches[0].clientX;
+      var diff = currentY - startY;
 
-      var diffY = currentY - startY;
-      var diffX = currentX - startX;
-
-      // Lock direction on first significant movement
-      if (!dirLocked && (Math.abs(diffY) > 8 || Math.abs(diffX) > 8)) {
-        dirLocked = true;
-        isVertical = Math.abs(diffY) > Math.abs(diffX);
-      }
-
-      // If horizontal, let the browser handle it (pan-x)
-      if (!isVertical) return;
-
-      // Vertical drag — we take over
-      if (Math.abs(diffY) > 10) {
+      if (Math.abs(diff) > 8) {
         dragging = true;
         if (e.cancelable) e.preventDefault();
 
+        // Kill iframe touch capture
+        iframe.style.pointerEvents = 'none';
+
         content.style.transition = 'none';
         modal.style.transition   = 'none';
+        content.style.transform  = 'translateY(' + diff + 'px)';
 
-        content.style.transform = 'translateY(' + diffY + 'px)';
-        var opacity = 1 - (Math.abs(diffY) / (window.innerHeight * 0.7));
+        var opacity = 1 - (Math.abs(diff) / (window.innerHeight * 0.7));
         modal.style.opacity = Math.max(0, opacity);
       }
     }, { passive: false });
 
-    content.addEventListener('touchend', function () {
+    header.addEventListener('touchend', finishDrag);
+
+    // CONTENT touchmove — fires once iframe pointer-events are disabled
+    content.addEventListener('touchstart', function (e) {
+      // Only track if we're already in drag mode (iframe disabled)
+      if (iframe.style.pointerEvents === 'none') {
+        startY   = e.touches[0].clientY;
+        currentY = startY;
+      }
+    }, { passive: true });
+
+    content.addEventListener('touchmove', function (e) {
+      if (!dragging) return;
+
+      currentY = e.touches[0].clientY;
+      var diff = currentY - startY;
+
+      if (e.cancelable) e.preventDefault();
+
+      content.style.transition = 'none';
+      modal.style.transition   = 'none';
+      content.style.transform  = 'translateY(' + diff + 'px)';
+
+      var opacity = 1 - (Math.abs(diff) / (window.innerHeight * 0.7));
+      modal.style.opacity = Math.max(0, opacity);
+    }, { passive: false });
+
+    content.addEventListener('touchend', finishDrag);
+
+    function finishDrag() {
+      // Restore iframe interaction
+      iframe.style.pointerEvents = '';
+
       if (!dragging) return;
       dragging = false;
 
-      var diffY     = currentY - startY;
-      var threshold = 100;
+      var diff      = currentY - startY;
+      var threshold = 80;
 
       content.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
       modal.style.transition   = 'opacity 0.3s ease-out';
 
-      if (Math.abs(diffY) > threshold) {
-        // Fly away in the direction of the swipe
-        var dir = diffY > 0 ? '100vh' : '-100vh';
+      if (Math.abs(diff) > threshold) {
+        var dir = diff > 0 ? '100vh' : '-100vh';
         content.style.transform = 'translateY(' + dir + ')';
         modal.style.opacity = '0';
         setTimeout(function () {
           closePlatformPreview();
         }, 300);
       } else {
-        // Snap back
         content.style.transform = 'translateY(0)';
         modal.style.opacity = '1';
       }
-    });
+    }
   });
 })();

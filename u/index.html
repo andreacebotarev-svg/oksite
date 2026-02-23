@@ -498,14 +498,16 @@
     </div>
 
     <!-- ═══════════════ PLATFORM MODAL ═══════════════ -->
-    <div id="platformModal" class="ok-modal-overlay" style="display:none; z-index: 100000; justify-content: center; padding: 20px;">
-      <div class="ok-modal-content platform-modal-content" style="height: 90vh; max-height: 1200px; display: flex; flex-direction: column; overflow: hidden; padding: 0;">
-        <div class="ok-modal-header" style="padding: 10px 20px;">
+    <div id="platformModal" class="ok-modal-overlay" style="display:none; z-index: 100000;">
+      <div class="ok-modal-content platform-modal-content" style="display: flex; flex-direction: column; overflow: hidden; padding: 0;">
+        <div class="ok-modal-header" id="platformModalHeader">
           <div class="ok-modal-drag-handle"></div>
-          <h3 id="platformModalTitle" style="font-size: 16px; margin: 0;">Интерактивный урок</h3>
-          <button class="ok-modal-close" onclick="closePlatformPreview()">✕</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <h3 id="platformModalTitle" style="font-size: 16px; margin: 0;">Интерактивный урок</h3>
+            <button class="ok-modal-close" onclick="closePlatformPreview()">✕</button>
+          </div>
         </div>
-        <div class="ok-modal-body" id="platformModalBody" style="flex: 1; padding: 0; overflow: hidden; -webkit-overflow-scrolling: touch;">
+        <div class="ok-modal-body" id="platformModalBody" style="flex: 1; padding: 0; overflow: hidden;">
           <iframe id="platformIframe" src="" style="width: 100%; height: 100%; border: none; display: block;" title="Пример интерактивного урока" loading="lazy" allow="autoplay; microphone"></iframe>
         </div>
       </div>

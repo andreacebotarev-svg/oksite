@@ -29,6 +29,7 @@ body {
   font-size: 18px;
   line-height: 1.55;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a { color: var(--ok); text-decoration: none; }
@@ -871,15 +872,18 @@ strong { font-weight: 600; }
   position: relative; /* For the drag handle */
 }
 .ok-modal-drag-handle {
-  display: none;
+  display: block;
   width: 40px;
   height: 5px;
-  background: #ddd;
+  background: #ccc;
   border-radius: 3px;
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 0 auto 6px auto;
+}
+
+.ok-modal-header {
+  cursor: grab;
+  padding: 12px 20px 10px;
+  min-height: 48px;
 }
 
 .ok-modal-header h3 { margin: 0; font-size: 1.2rem; }
@@ -930,7 +934,12 @@ strong { font-weight: 600; }
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    border-radius: 0;
+    max-height: none !important;
+    border-radius: 16px 16px 0 0;
+  }
+  #platformModal {
+    padding: 0 !important;
+    align-items: flex-end !important;
   }
   .ok-layout {
     grid-template-columns: 1fr;

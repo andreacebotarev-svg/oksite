@@ -119,49 +119,50 @@ class OKEnglishAssistant {
 
   initSwipeGestures() {
     let startY = 0;
+    let startX = 0;
     let currentY = 0;
     let isDragging = false;
-    let isAtTop = true;
+    let dirLocked = false;
+    let isVertical = false;
+
+    // Tell browser: you handle horizontal, we handle vertical
+    this.elements.window.style.touchAction = 'pan-x';
 
     const handleTouchStart = (e) => {
         if (window.innerWidth > 600) return;
-        
-        // Determine if we are at the top of the scrolling messages container
-        const messagesEl = this.elements.messages;
-        isAtTop = true; // Default to true for header/input
-        
-        // If swiping from the messages area, check scroll position
-        if (messagesEl && messagesEl.contains(e.target)) {
-            if (messagesEl.scrollTop > 5) {
-                isAtTop = false;
-            }
-        }
-
-        const touch = e.touches[0];
-        startY = touch.clientY;
+        startY = e.touches[0].clientY;
+        startX = e.touches[0].clientX;
+        currentY = startY;
         isDragging = false;
+        dirLocked = false;
+        isVertical = false;
     };
 
     const handleTouchMove = (e) => {
         if (window.innerWidth > 600) return;
-        
-        // If we started a swipe from the middle of the scrollable content, abort
-        if (!isAtTop) return;
 
-        const touch = e.touches[0];
-        currentY = touch.clientY;
-        const diff = currentY - startY; 
+        currentY = e.touches[0].clientY;
+        const diffY = currentY - startY;
+        const diffX = e.touches[0].clientX - startX;
 
-        // If swiping UP while at the top, let native scroll handle it (bounce or nothing)
-        if (diff < 0) return;
+        // Lock direction on first significant movement
+        if (!dirLocked && (Math.abs(diffY) > 8 || Math.abs(diffX) > 8)) {
+            dirLocked = true;
+            isVertical = Math.abs(diffY) > Math.abs(diffX);
+        }
 
-        // Allow dragging down
-        if (diff > 10) {
-            if(e.cancelable) e.preventDefault(); 
+        // Horizontal — let browser handle
+        if (!isVertical) return;
+
+        // Vertical drag
+        if (Math.abs(diffY) > 10) {
+            if (e.cancelable) e.preventDefault();
             isDragging = true;
             this.elements.window.classList.add('is-dragging');
-            const opacity = 1 - (diff / (window.innerHeight * 0.8)); 
-            this.elements.window.style.transform = `translateY(${diff}px)`;
+
+            this.elements.window.style.transition = 'none';
+            this.elements.window.style.transform = `translateY(${diffY}px)`;
+            const opacity = 1 - (Math.abs(diffY) / (window.innerHeight * 0.7));
             this.elements.window.style.opacity = Math.max(0, opacity);
         }
     };
@@ -174,11 +175,12 @@ class OKEnglishAssistant {
         isDragging = false;
 
         const diff = currentY - startY;
-        const threshold = 120;
+        const threshold = 100;
 
-        if (diff > threshold) {
+        if (Math.abs(diff) > threshold) {
+            const dir = diff > 0 ? '100dvh' : '-100dvh';
             this.elements.window.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease';
-            this.elements.window.style.transform = `translateY(100dvh)`;
+            this.elements.window.style.transform = `translateY(${dir})`;
             this.elements.window.style.opacity = '0';
             
             setTimeout(() => {
@@ -189,10 +191,12 @@ class OKEnglishAssistant {
             }, 300);
         } else {
             this.elements.window.classList.add('animate-restore');
+            this.elements.window.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
             this.elements.window.style.transform = '';
             this.elements.window.style.opacity = '';
             setTimeout(() => {
                 this.elements.window.classList.remove('animate-restore');
+                this.elements.window.style.transition = '';
             }, 300);
         }
     };

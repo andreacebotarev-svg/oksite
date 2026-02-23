@@ -31,7 +31,7 @@ class GeoRouter {
             default: {
                 name: 'Groq',
                 endpoint: 'https://api.groq.com/openai/v1/chat/completions',
-                model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+                model: 'llama-3.3-70b-versatile',
                 getHeaders: (apiKey) => ({
                     "Authorization": `Bearer ${apiKey}`,
                     "Content-Type": "application/json"

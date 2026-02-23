@@ -115,7 +115,7 @@
             </div>
           </div>
           <div class="ok-post__footer">
-            <button class="ok-reaction"><span class="ok-reaction__icon">❤️</span> Класс!</button>
+            <button class="ok-reaction ok-reaction--like" onclick="toggleLike(this)"><span class="ok-reaction__icon">❤️</span> <span class="ok-reaction__text">Класс!</span> <span class="ok-reaction__count"></span></button>
             <button class="ok-reaction"><span class="ok-reaction__icon">💬</span> Написать</button>
             <button class="ok-reaction"><span class="ok-reaction__icon">↗️</span> Поделиться</button>
           </div>
@@ -166,7 +166,7 @@
             </div>
           </div>
           <div class="ok-post__footer">
-            <button class="ok-reaction"><span class="ok-reaction__icon">❤️</span> Класс!</button>
+            <button class="ok-reaction ok-reaction--like" onclick="toggleLike(this)"><span class="ok-reaction__icon">❤️</span> <span class="ok-reaction__text">Класс!</span> <span class="ok-reaction__count"></span></button>
             <button class="ok-reaction"><span class="ok-reaction__icon">↗️</span> Поделиться</button>
           </div>
         </article>
@@ -198,7 +198,7 @@
             </div>
           </div>
           <div class="ok-post__footer">
-            <button class="ok-reaction"><span class="ok-reaction__icon">❤️</span> Класс!</button>
+            <button class="ok-reaction ok-reaction--like" onclick="toggleLike(this)"><span class="ok-reaction__icon">❤️</span> <span class="ok-reaction__text">Класс!</span> <span class="ok-reaction__count"></span></button>
           </div>
         </article>
 
@@ -761,6 +761,40 @@
         // Set initial cursor
         slider.style.cursor = 'grab';
       });
+
+      // ── REACTIONS (Likes) ──
+      document.addEventListener('DOMContentLoaded', () => {
+        const likeButtons = document.querySelectorAll('.ok-reaction--like');
+        likeButtons.forEach((btn, idx) => {
+          const baseLikes = 450;
+          // Deterministic pseudo-random number per post for realistic feel
+          const seededLikes = baseLikes + ((idx * 37) % 70); 
+          const countEl = btn.querySelector('.ok-reaction__count');
+          if (countEl) countEl.textContent = seededLikes;
+        });
+      });
+
+      function toggleLike(btn) {
+        const countEl = btn.querySelector('.ok-reaction__count');
+        if (!countEl) return;
+        
+        let currentCount = parseInt(countEl.textContent);
+        if (isNaN(currentCount)) currentCount = 450;
+        
+        if (btn.classList.contains('is-liked')) {
+          btn.classList.remove('is-liked');
+          countEl.textContent = currentCount - 1;
+        } else {
+          btn.classList.add('is-liked');
+          countEl.textContent = currentCount + 1;
+          
+          const anim = document.createElement('div');
+          anim.className = 'ok-like-anim';
+          anim.textContent = '+1';
+          btn.appendChild(anim);
+          setTimeout(() => anim.remove(), 800);
+        }
+      }
     </script>
 
     <!-- Reviews Modal Structure -->

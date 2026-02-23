@@ -310,18 +310,45 @@ strong { font-weight: 600; }
   justify-content: center;
   gap: 6px;
   padding: 12px 8px;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--muted);
   background: none;
   border: none;
   cursor: pointer;
   transition: background 0.1s, color 0.1s;
+  position: relative;
+  overflow: visible;
 }
 .ok-reaction:hover {
   background: #f5f5f5;
   color: var(--ok);
 }
-.ok-reaction__icon { font-size: 1rem; }
+.ok-reaction.is-liked {
+  color: #E84C3D;
+  background: rgba(232, 76, 61, 0.05);
+}
+.ok-reaction__icon { font-size: 1.1rem; transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.ok-reaction.is-liked .ok-reaction__icon { transform: scale(1.2); }
+.ok-reaction__count { font-weight: 600; }
+
+.ok-like-anim {
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #E84C3D;
+  font-weight: bold;
+  font-size: 1.1rem;
+  pointer-events: none;
+  animation: floatUpLike 0.8s forwards ease-out;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+@keyframes floatUpLike {
+  0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+  20% { transform: translate(-50%, -10px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -30px) scale(1); opacity: 0; }
+}
 
 /* ── BUTTONS ─────────────────────────────────────────────── */
 .ok-btn {

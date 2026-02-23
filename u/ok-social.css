@@ -896,18 +896,31 @@ strong { font-weight: 600; }
 .ok-modal-header h3 { margin: 0; font-size: 1.2rem; }
 
 .ok-modal-close {
-  background: #f0f0f0;
+  background: var(--ok);
+  color: #fff;
   border: none;
-  width: 32px; height: 32px;
+  width: 40px; height: 40px;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 1.2rem;
-  transition: background 0.2s;
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 15px rgba(238, 130, 8, 0.5);
+  animation: modalCloseGlow 2s infinite alternate;
+  font-weight: bold;
 }
-.ok-modal-close:hover { background: #e0e0e0; }
+.ok-modal-close:hover { 
+  background: #d87304; 
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(238, 130, 8, 0.8);
+}
+
+@keyframes modalCloseGlow {
+  0% { box-shadow: 0 0 8px rgba(238, 130, 8, 0.4); }
+  100% { box-shadow: 0 0 20px rgba(238, 130, 8, 0.8), 0 0 35px rgba(238, 130, 8, 0.4); }
+}
 
 .ok-modal-body {
   padding: 20px;

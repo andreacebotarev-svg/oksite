@@ -997,7 +997,20 @@ strong { font-weight: 600; }
     font-weight: 600;
   }
   .ok-programs { grid-template-columns: 1fr; }
-  .ok-tools-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .ok-tools-grid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 10px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .ok-tools-grid::-webkit-scrollbar { display: none; }
+  .ok-tool-card {
+    min-width: 140px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
   .ok-cover__content { flex-direction: column; text-align: center; }
   .ok-cover__stats { justify-content: center; }
   .ok-cover__cta { width: 100%; }

@@ -100,6 +100,18 @@ strong { font-weight: 600; }
   font-size: 0.95rem;
   flex-shrink: 0;
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 20px;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  animation: solarPulseWhite 2s infinite;
+}
+
+@keyframes solarPulseWhite {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
 }
 
 /* ── PROFILE COVER ───────────────────────────────────────── */
@@ -156,6 +168,8 @@ strong { font-weight: 600; }
 .ok-cover__cta {
   flex-shrink: 0;
   font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  animation: solarPulseWhite 2s infinite !important;
 }
 
 /* ── AVATAR ──────────────────────────────────────────────── */

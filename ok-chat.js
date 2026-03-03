@@ -35,6 +35,11 @@ class OKEnglishAssistant {
   init() {
     this.createUI();
     this.bindEvents();
+    setTimeout(() => {
+      if (this.elements && this.elements.window && !this.elements.window.classList.contains("active")) {
+        this.toggleChat(true);
+      }
+    }, 4000);
   }
 
   createUI() {

@@ -255,20 +255,25 @@ class OKEnglishAssistant {
     });
 
     if (window.visualViewport) {
+      let vpResizeTimer = null;
       window.visualViewport.addEventListener("resize", () => {
         if (
           window.innerWidth <= 600 &&
           this.elements.window.classList.contains("active")
         ) {
-          const height = window.visualViewport.height;
-          this.elements.window.style.height = `${height}px`;
-          if (height < window.innerHeight * 0.8) {
-            this.elements.window.classList.add("keyboard-open");
-          } else {
-            this.elements.window.classList.remove("keyboard-open");
-          }
-          this.elements.messages.scrollTop =
-            this.elements.messages.scrollHeight;
+          // Debounce to avoid janky height updates during iOS keyboard animation
+          clearTimeout(vpResizeTimer);
+          vpResizeTimer = setTimeout(() => {
+            const height = window.visualViewport.height;
+            this.elements.window.style.height = `${height}px`;
+            if (height < window.innerHeight * 0.8) {
+              this.elements.window.classList.add("keyboard-open");
+            } else {
+              this.elements.window.classList.remove("keyboard-open");
+            }
+            this.elements.messages.scrollTop =
+              this.elements.messages.scrollHeight;
+          }, 100);
         }
       });
     }
@@ -278,7 +283,21 @@ class OKEnglishAssistant {
         setTimeout(() => {
           this.elements.messages.scrollTop =
             this.elements.messages.scrollHeight;
-        }, 300);
+        }, 400);
+      }
+    });
+
+    // On iOS, when keyboard closes (blur), restore full height
+    this.elements.input.addEventListener("blur", () => {
+      if (window.innerWidth <= 600) {
+        setTimeout(() => {
+          if (this.elements.window.classList.contains("active")) {
+            this.elements.window.classList.remove("keyboard-open");
+            if (window.visualViewport) {
+              this.elements.window.style.height = `${window.visualViewport.height}px`;
+            }
+          }
+        }, 200);
       }
     });
 
@@ -337,13 +356,18 @@ class OKEnglishAssistant {
   toggleChat(forceState = null) {
     const isActive = this.elements.window.classList.contains("active");
     const newState = forceState !== null ? forceState : !isActive;
+    const isMobile = window.innerWidth <= 600;
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
     if (newState) {
       this.elements.window.classList.add("active");
-      this.elements.input.focus();
+      // Only auto-focus on desktop — on mobile/iOS it triggers the keyboard
+      if (!isMobile) {
+        this.elements.input.focus();
+      }
       if (this.elements.badge)
         this.elements.badge.style.setProperty("display", "none", "important");
-      if (window.innerWidth <= 600) {
+      if (isMobile) {
         this.savedScrollY = window.scrollY;
         document.body.style.position = "fixed";
         document.body.style.top = `-${this.savedScrollY}px`;
@@ -351,10 +375,18 @@ class OKEnglishAssistant {
         document.body.style.height = "100%";
         if (window.visualViewport) {
           this.elements.window.style.height = `${window.visualViewport.height}px`;
+        } else if (isIOS) {
+          // iOS fallback: use innerHeight which accounts for Safari toolbars
+          this.elements.window.style.height = `${window.innerHeight}px`;
         }
       }
     } else {
+      // Blur input first to dismiss iOS keyboard before animation
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+        document.activeElement.blur();
+      }
       this.elements.window.classList.remove("active");
+      this.elements.window.classList.remove("keyboard-open");
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";

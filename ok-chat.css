@@ -482,3 +482,43 @@
 
 .chat-window.is-dragging { transition: none !important; }
 .chat-window.animate-restore { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) !important; transform: translateY(0) !important; }
+
+/* ============================================================
+   iOS SAFARI FIXES
+   ============================================================ */
+
+/* Prevent iOS rubber-band scroll from leaking behind chat */
+@supports (-webkit-touch-callout: none) {
+  .chat-window.active {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  .chat-messages {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* iOS safe-area: extra padding at bottom for home indicator */
+  .chat-input-area {
+    padding-bottom: max(12px, env(safe-area-inset-bottom, 12px));
+  }
+}
+
+/* When iOS keyboard is open, shrink the chat height smoothly */
+@media (max-width: 600px) {
+  .chat-window.keyboard-open {
+    transition: height 0.2s ease !important;
+  }
+
+  .chat-window.keyboard-open .chat-suggestions {
+    max-height: 60px;
+    overflow-y: auto;
+    flex-wrap: nowrap;
+  }
+
+  .chat-window.keyboard-open .btn-header-action {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

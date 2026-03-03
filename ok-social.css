@@ -1353,3 +1353,31 @@ strong { font-weight: 600; }
   .ok-card-vip:hover { transform: translateY(-4px); }
 }
 
+/* ============================================================
+   iOS SAFARI FIXES (Global)
+   ============================================================ */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari: 100vh includes the URL bar. Use -webkit-fill-available */
+  .ok-modal-overlay {
+    height: -webkit-fill-available;
+  }
+
+  .ok-modal-body {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Prevent background scroll when modal is open */
+  body[style*="overflow: hidden"] {
+    position: fixed;
+    width: 100%;
+  }
+
+  /* Platform modal iOS height fix */
+  @media (max-width: 900px) {
+    .platform-modal-content {
+      height: -webkit-fill-available !important;
+    }
+  }
+}
+

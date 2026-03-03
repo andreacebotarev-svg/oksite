@@ -21,12 +21,12 @@ class OKEnglishAssistant {
         "Сколько стоят занятия? 💳",
         "Как проходит бесплатный урок?",
         "Ребенок будет учиться на 5? 📈",
-        "Записать ребенка ✍️"
+        "Записать ребенка ✍️",
       ],
       pricing: [
         "Пакет из 8 уроков 📦",
         "Как проходят онлайн-уроки?",
-        "Скидка по промокоду 🎁"
+        "Скидка по промокоду 🎁",
       ],
     };
     this.init();
@@ -126,103 +126,111 @@ class OKEnglishAssistant {
     let isVertical = false;
 
     // Tell browser: you handle horizontal, we handle vertical
-    this.elements.window.style.touchAction = 'pan-x';
+    this.elements.window.style.touchAction = "pan-x";
 
     const handleTouchStart = (e) => {
-        if (window.innerWidth > 600) return;
-        startY = e.touches[0].clientY;
-        startX = e.touches[0].clientX;
-        currentY = startY;
-        isDragging = false;
-        dirLocked = false;
-        isVertical = false;
+      if (window.innerWidth > 600) return;
+      startY = e.touches[0].clientY;
+      startX = e.touches[0].clientX;
+      currentY = startY;
+      isDragging = false;
+      dirLocked = false;
+      isVertical = false;
     };
 
     const handleTouchMove = (e) => {
-        if (window.innerWidth > 600) return;
+      if (window.innerWidth > 600) return;
 
-        currentY = e.touches[0].clientY;
-        const diffY = currentY - startY;
-        const diffX = e.touches[0].clientX - startX;
+      currentY = e.touches[0].clientY;
+      const diffY = currentY - startY;
+      const diffX = e.touches[0].clientX - startX;
 
-        // Lock direction on first significant movement
-        if (!dirLocked && (Math.abs(diffY) > 8 || Math.abs(diffX) > 8)) {
-            dirLocked = true;
-            isVertical = Math.abs(diffY) > Math.abs(diffX);
-        }
+      // Lock direction on first significant movement
+      if (!dirLocked && (Math.abs(diffY) > 8 || Math.abs(diffX) > 8)) {
+        dirLocked = true;
+        isVertical = Math.abs(diffY) > Math.abs(diffX);
+      }
 
-        // Horizontal — let browser handle
-        if (!isVertical) return;
+      // Horizontal — let browser handle
+      if (!isVertical) return;
 
-        // Vertical drag
-        if (Math.abs(diffY) > 10) {
-            if (e.cancelable) e.preventDefault();
-            isDragging = true;
-            this.elements.window.classList.add('is-dragging');
+      // Vertical drag
+      if (Math.abs(diffY) > 10) {
+        if (e.cancelable) e.preventDefault();
+        isDragging = true;
+        this.elements.window.classList.add("is-dragging");
 
-            this.elements.window.style.transition = 'none';
-            this.elements.window.style.transform = `translateY(${diffY}px)`;
-            const opacity = 1 - (Math.abs(diffY) / (window.innerHeight * 0.7));
-            this.elements.window.style.opacity = Math.max(0, opacity);
-        }
+        this.elements.window.style.transition = "none";
+        this.elements.window.style.transform = `translateY(${diffY}px)`;
+        const opacity = 1 - Math.abs(diffY) / (window.innerHeight * 0.7);
+        this.elements.window.style.opacity = Math.max(0, opacity);
+      }
     };
 
     const handleTouchEnd = (e) => {
-        if (window.innerWidth > 600) return;
-        if (!isDragging) return;
+      if (window.innerWidth > 600) return;
+      if (!isDragging) return;
 
-        this.elements.window.classList.remove('is-dragging');
-        isDragging = false;
+      this.elements.window.classList.remove("is-dragging");
+      isDragging = false;
 
-        const diff = currentY - startY;
-        const threshold = 100;
+      const diff = currentY - startY;
+      const threshold = 100;
 
-        if (Math.abs(diff) > threshold) {
-            const dir = diff > 0 ? '100dvh' : '-100dvh';
-            this.elements.window.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease';
-            this.elements.window.style.transform = `translateY(${dir})`;
-            this.elements.window.style.opacity = '0';
-            
-            setTimeout(() => {
-                this.toggleChat(false);
-                this.elements.window.style.transform = '';
-                this.elements.window.style.opacity = '';
-                this.elements.window.style.transition = '';
-            }, 300);
-        } else {
-            this.elements.window.classList.add('animate-restore');
-            this.elements.window.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
-            this.elements.window.style.transform = '';
-            this.elements.window.style.opacity = '';
-            setTimeout(() => {
-                this.elements.window.classList.remove('animate-restore');
-                this.elements.window.style.transition = '';
-            }, 300);
-        }
+      if (Math.abs(diff) > threshold) {
+        const dir = diff > 0 ? "100dvh" : "-100dvh";
+        this.elements.window.style.transition =
+          "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease";
+        this.elements.window.style.transform = `translateY(${dir})`;
+        this.elements.window.style.opacity = "0";
+
+        setTimeout(() => {
+          this.toggleChat(false);
+          this.elements.window.style.transform = "";
+          this.elements.window.style.opacity = "";
+          this.elements.window.style.transition = "";
+        }, 300);
+      } else {
+        this.elements.window.classList.add("animate-restore");
+        this.elements.window.style.transition =
+          "transform 0.3s ease, opacity 0.3s ease";
+        this.elements.window.style.transform = "";
+        this.elements.window.style.opacity = "";
+        setTimeout(() => {
+          this.elements.window.classList.remove("animate-restore");
+          this.elements.window.style.transition = "";
+        }, 300);
+      }
     };
 
-    this.elements.window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    this.elements.window.addEventListener('touchmove', handleTouchMove, { passive: false });
-    this.elements.window.addEventListener('touchend', handleTouchEnd);
+    this.elements.window.addEventListener("touchstart", handleTouchStart, {
+      passive: true,
+    });
+    this.elements.window.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    });
+    this.elements.window.addEventListener("touchend", handleTouchEnd);
   }
 
   bindEvents() {
     this.elements.toggle.addEventListener("click", () => this.toggleChat());
-    
+
     if (this.elements.closeBtn) {
       const closeHandler = (e) => {
         e.preventDefault();
         e.stopPropagation();
         this.toggleChat(false);
       };
-      this.elements.closeBtn.addEventListener("touchstart", closeHandler, { passive: false });
+      this.elements.closeBtn.addEventListener("touchstart", closeHandler, {
+        passive: false,
+      });
       this.elements.closeBtn.addEventListener("click", closeHandler);
     }
 
     if (this.elements.btnLeaveRequest) {
-        this.elements.btnLeaveRequest.addEventListener("click", () => {
-             this.showInlineForm();
-        });
+      this.elements.btnLeaveRequest.addEventListener("click", () => {
+        this.showInlineForm();
+      });
     }
 
     this.elements.send.addEventListener("click", () => this.sendMessage());
@@ -254,7 +262,8 @@ class OKEnglishAssistant {
           } else {
             this.elements.window.classList.remove("keyboard-open");
           }
-          this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+          this.elements.messages.scrollTop =
+            this.elements.messages.scrollHeight;
         }
       });
     }
@@ -262,46 +271,61 @@ class OKEnglishAssistant {
     this.elements.input.addEventListener("focus", () => {
       if (window.innerWidth <= 600) {
         setTimeout(() => {
-          this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
+          this.elements.messages.scrollTop =
+            this.elements.messages.scrollHeight;
         }, 300);
       }
     });
 
     if (this.elements.badge) {
-        setTimeout(() => {
-            if (!this.elements.window.classList.contains("active")) {
-                this.elements.badge.textContent = "Нужна помощь? Я здесь!";
-                this.elements.badge.classList.add("is-visible");
-                setTimeout(() => this.elements.badge.classList.remove("is-visible"), 5000);
-            }
-        }, 3000);
+      setTimeout(() => {
+        if (!this.elements.window.classList.contains("active")) {
+          this.elements.badge.textContent = "Нужна помощь? Я здесь!";
+          this.elements.badge.classList.add("is-visible");
+          setTimeout(
+            () => this.elements.badge.classList.remove("is-visible"),
+            5000,
+          );
+        }
+      }, 3000);
 
-        let scrollRAF;
-        window.addEventListener('scroll', () => {
-            if (scrollRAF) cancelAnimationFrame(scrollRAF);
-            scrollRAF = requestAnimationFrame(() => {
-                if (this.elements.window.classList.contains("active")) return;
-                
-                const docScroll = document.documentElement.scrollTop || document.body.scrollTop;
-                const docHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-                const winHeight = window.innerHeight;
-                
-                const scrollBottom = docHeight - winHeight - docScroll;
-                
-                if (scrollBottom < 1500) {
-                    if (this.elements.badge.textContent !== "Помочь Вам оставить заявку? 😊") {
-                        this.elements.badge.textContent = "Помочь Вам оставить заявку? 😊";
-                    }
-                    if (!this.elements.badge.classList.contains("is-visible")) {
-                        this.elements.badge.classList.add("is-visible");
-                    }
-                } else {
-                    if (this.elements.badge.classList.contains("is-visible")) {
-                        this.elements.badge.classList.remove("is-visible");
-                    }
-                }
-            });
-        }, { passive: true });
+      let scrollRAF;
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (scrollRAF) cancelAnimationFrame(scrollRAF);
+          scrollRAF = requestAnimationFrame(() => {
+            if (this.elements.window.classList.contains("active")) return;
+
+            const docScroll =
+              document.documentElement.scrollTop || document.body.scrollTop;
+            const docHeight =
+              document.documentElement.scrollHeight ||
+              document.body.scrollHeight;
+            const winHeight = window.innerHeight;
+
+            const scrollBottom = docHeight - winHeight - docScroll;
+
+            if (scrollBottom < 1500) {
+              if (
+                this.elements.badge.textContent !==
+                "Помочь Вам оставить заявку? 😊"
+              ) {
+                this.elements.badge.textContent =
+                  "Помочь Вам оставить заявку? 😊";
+              }
+              if (!this.elements.badge.classList.contains("is-visible")) {
+                this.elements.badge.classList.add("is-visible");
+              }
+            } else {
+              if (this.elements.badge.classList.contains("is-visible")) {
+                this.elements.badge.classList.remove("is-visible");
+              }
+            }
+          });
+        },
+        { passive: true },
+      );
     }
   }
 
@@ -312,13 +336,14 @@ class OKEnglishAssistant {
     if (newState) {
       this.elements.window.classList.add("active");
       this.elements.input.focus();
-      if (this.elements.badge) this.elements.badge.style.setProperty('display', 'none', 'important');
+      if (this.elements.badge)
+        this.elements.badge.style.setProperty("display", "none", "important");
       if (window.innerWidth <= 600) {
         this.savedScrollY = window.scrollY;
         document.body.style.position = "fixed";
         document.body.style.top = `-${this.savedScrollY}px`;
         document.body.style.width = "100%";
-        document.body.style.height = "100%"; 
+        document.body.style.height = "100%";
         if (window.visualViewport) {
           this.elements.window.style.height = `${window.visualViewport.height}px`;
         }
@@ -330,29 +355,29 @@ class OKEnglishAssistant {
       document.body.style.width = "";
       document.body.style.height = "";
       this.elements.window.style.height = "";
-      
+
       if (this.savedScrollY !== undefined) {
-          window.scrollTo(0, this.savedScrollY);
-          this.savedScrollY = undefined;
+        window.scrollTo(0, this.savedScrollY);
+        this.savedScrollY = undefined;
       }
     }
   }
 
   renderSuggestions(list) {
     this.elements.suggestions.innerHTML = "";
-    
+
     let selected = [...list].sort(() => 0.5 - Math.random()).slice(0, 4);
 
     selected.forEach((text) => {
       const btn = document.createElement("button");
       btn.className = "suggestion-btn";
       if (text.includes("стоят") || text.includes("Записать")) {
-          btn.classList.add("glow-sun");
+        btn.classList.add("glow-sun");
       }
       btn.textContent = text;
       btn.onclick = (e) => {
         e.preventDefault();
-        e.stopPropagation(); 
+        e.stopPropagation();
         this.sendMessage(text);
       };
       this.elements.suggestions.appendChild(btn);
@@ -361,8 +386,11 @@ class OKEnglishAssistant {
 
   showInlineForm() {
     this.elements.suggestions.innerHTML = "";
-    this.addMessage("Оставьте свое имя и телефон (или Telegram), и Андрей свяжется с Вами, чтобы ответить на все вопросы и записать ребенка на урок! 👇", "ai");
-    
+    this.addMessage(
+      "Оставьте свое имя и телефон (или Telegram), и Андрей свяжется с Вами, чтобы ответить на все вопросы и записать ребенка на урок! 👇",
+      "ai",
+    );
+
     const formDiv = document.createElement("div");
     formDiv.className = "message ai inline-form-message";
     formDiv.innerHTML = `
@@ -373,7 +401,7 @@ class OKEnglishAssistant {
             <div id="chatLeadStatus" style="font-size:12px; display:none; text-align:center; margin-top:5px;"></div>
         </div>
     `;
-    
+
     this.elements.messages.appendChild(formDiv);
     this.elements.messages.scrollTop = this.elements.messages.scrollHeight;
 
@@ -383,48 +411,48 @@ class OKEnglishAssistant {
     const statusMsg = formDiv.querySelector("#chatLeadStatus");
 
     btnSubmit.addEventListener("click", () => {
-        const name = nameInput.value.trim();
-        const contact = contactInput.value.trim();
+      const name = nameInput.value.trim();
+      const contact = contactInput.value.trim();
 
-        if (!name || !contact) {
-            statusMsg.style.display = "block";
-            statusMsg.style.color = "#EE8208";
-            statusMsg.textContent = "Пожалуйста, заполните оба поля.";
-            return;
-        }
+      if (!name || !contact) {
+        statusMsg.style.display = "block";
+        statusMsg.style.color = "#EE8208";
+        statusMsg.textContent = "Пожалуйста, заполните оба поля.";
+        return;
+      }
 
-        btnSubmit.disabled = true;
-        btnSubmit.textContent = "Отправка...";
-        statusMsg.style.display = "none";
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Отправка...";
+      statusMsg.style.display = "none";
 
-        fetch('https://api.web3forms.com/submit', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({
-                access_key: "702470cb-beb9-4faa-93e7-595495a5f4da",
-                subject: "⚡ Новая заявка из AI-чата (Родители) englishlessons",
-                from_name: "Виртуальный помощник",
-                name: name,
-                contact: contact,
-                source: "AI Inline Form Parents"
-            })
-        })
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "702470cb-beb9-4faa-93e7-595495a5f4da",
+          subject: "⚡ Новая заявка из AI-чата (Родители) englishlessons",
+          from_name: "Виртуальный помощник",
+          name: name,
+          contact: contact,
+          source: "AI Inline Form Parents",
+        }),
+      })
         .then(async (response) => {
-            if (response.status == 200) {
-                formDiv.innerHTML = `<div style="text-align:center; color:#67A526; font-weight:bold;">✅ Заявка успешно отправлена! Андрей Чеботарев скоро свяжется с Вами. 🎉</div>`;
-            } else {
-                throw new Error("Failed");
-            }
+          if (response.status == 200) {
+            formDiv.innerHTML = `<div style="text-align:center; color:#67A526; font-weight:bold;">✅ Заявка успешно отправлена! Андрей Чеботарев скоро свяжется с Вами. 🎉</div>`;
+          } else {
+            throw new Error("Failed");
+          }
         })
-        .catch(err => {
-            btnSubmit.disabled = false;
-            btnSubmit.textContent = "Отправить заявку ✔️";
-            statusMsg.style.display = "block";
-            statusMsg.style.color = "#d32f2f";
-            statusMsg.textContent = "Произошла ошибка. Попробуйте снова.";
+        .catch((err) => {
+          btnSubmit.disabled = false;
+          btnSubmit.textContent = "Отправить заявку ✔️";
+          statusMsg.style.display = "block";
+          statusMsg.style.color = "#d32f2f";
+          statusMsg.textContent = "Произошла ошибка. Попробуйте снова.";
         });
     });
   }
@@ -451,40 +479,57 @@ class OKEnglishAssistant {
     this.addMessage(text, "user");
     this.detectTopic(text);
 
-    const cleanedPhone = text.replace(/[^0-9]/g, '');
-    const isPhoneNumber = cleanedPhone.length >= 10 && cleanedPhone.length <= 15 && (text.includes('+') || cleanedPhone.startsWith('7') || cleanedPhone.startsWith('8') || cleanedPhone.startsWith('9'));
+    const cleanedPhone = text.replace(/[^0-9]/g, "");
+    const isPhoneNumber =
+      cleanedPhone.length >= 10 &&
+      cleanedPhone.length <= 15 &&
+      (text.includes("+") ||
+        cleanedPhone.startsWith("7") ||
+        cleanedPhone.startsWith("8") ||
+        cleanedPhone.startsWith("9"));
     const isTelegram = /@[\w]{4,}/.test(text) || /t\.me\/[\w]{4,}/.test(text);
 
     if (isPhoneNumber || isTelegram) {
-        this.addMessage("✅ Контакт принят! Передаю данные Андрею...", "ai");
-        this.elements.typing.style.display = "block";
-        
-        fetch('https://api.web3forms.com/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({
-                access_key: "702470cb-beb9-4faa-93e7-595495a5f4da",
-                subject: "⚡ Авто-Сбор Контакта из AI-чата (Родители)",
-                from_name: "Виртуальный помощник",
-                name: "Родитель из чата",
-                contact: text,
-                source: "AI Chat Auto-detect Parents"
-            })
-        })
+      this.addMessage("✅ Контакт принят! Передаю данные Андрею...", "ai");
+      this.elements.typing.style.display = "block";
+
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: "702470cb-beb9-4faa-93e7-595495a5f4da",
+          subject: "⚡ Авто-Сбор Контакта из AI-чата (Родители)",
+          from_name: "Виртуальный помощник",
+          name: "Родитель из чата",
+          contact: text,
+          source: "AI Chat Auto-detect Parents",
+        }),
+      })
         .then(async (response) => {
-            this.elements.typing.style.display = "none";
-            if (response.status == 200) {
-                this.addMessage("🎉 **Отлично!** Ваши контакты успешно переданы. Андрей скоро свяжется с Вами. Хорошего дня!", "ai");
-            } else { throw new Error("Failed"); }
+          this.elements.typing.style.display = "none";
+          if (response.status == 200) {
+            this.addMessage(
+              "🎉 **Отлично!** Ваши контакты успешно переданы. Андрей скоро свяжется с Вами. Хорошего дня!",
+              "ai",
+            );
+          } else {
+            throw new Error("Failed");
+          }
         })
-        .catch(err => {
-             this.elements.typing.style.display = "none";
-             this.addMessage("Произошла ошибка соединения. Пожалуйста, воспользуйтесь формой внизу страницы.", "ai");
+        .catch((err) => {
+          this.elements.typing.style.display = "none";
+          this.addMessage(
+            "Произошла ошибка соединения. Пожалуйста, воспользуйтесь формой внизу страницы.",
+            "ai",
+          );
         });
-        
-        this.messages.push({ role: "user", content: text });
-        this.messages.push({ role: "assistant", content: "Контакты переданы." });
-        return;
+
+      this.messages.push({ role: "user", content: text });
+      this.messages.push({ role: "assistant", content: "Контакты переданы." });
+      return;
     }
 
     const history = [
@@ -530,6 +575,7 @@ class OKEnglishAssistant {
               const data = JSON.parse(dataStr);
               const delta = data.choices[0]?.delta?.content || "";
               if (delta) {
+                await new Promise((r) => setTimeout(r, 15)); // Имитация скорости печати человека (задержка каждого токена)
                 aiMessage += delta;
                 messageElement.innerHTML = this.formatMessage(aiMessage);
                 this.elements.messages.scrollTop =
@@ -553,28 +599,38 @@ class OKEnglishAssistant {
       this.messages.push({ role: "assistant", content: aiMessage });
       this.renderSuggestions(this.suggestions.pricing);
     } catch (error) {
-      this.addMessage(`К сожалению, возникла техническая заминка. Вы можете написать напрямую Андрею в мессенджеры!<br><div class="chat-contact-footer">
+      this.addMessage(
+        `К сожалению, возникла техническая заминка. Вы можете написать напрямую Андрею в мессенджеры!<br><div class="chat-contact-footer">
                             📲 Telegram: <a href="https://t.me/English24fk" target="_blank">@English24fk</a><br>
                             📞 Тел: <a href="tel:+79243942682">8-924-394-26-82</a>
-                        </div>`, "ai");
+                        </div>`,
+        "ai",
+      );
     } finally {
       this.elements.typing.style.display = "none";
     }
   }
 
   formatMessage(text) {
-    return (
-      text
-        .replace(/^### (.*$)/gm, '<strong style="display:block; margin-top:10px;">$1</strong>')
-        .replace(/^## (.*$)/gm, '<strong style="display:block; font-size:1.1em; margin-top:12px;">$1</strong>')
-        .replace(/^# (.*$)/gm, '<strong style="display:block; font-size:1.2em; margin-top:14px;">$1</strong>')
-        .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
-        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-        .replace(/\*(.*?)\*/g, "<em>$1</em>")
-        .replace(/^\* (.*$)/gm, "• $1")
-        .replace(/^- (.*$)/gm, "• $1")
-        .replace(/\n/g, "<br>")
-    );
+    return text
+      .replace(
+        /^### (.*$)/gm,
+        '<strong style="display:block; margin-top:10px;">$1</strong>',
+      )
+      .replace(
+        /^## (.*$)/gm,
+        '<strong style="display:block; font-size:1.1em; margin-top:12px;">$1</strong>',
+      )
+      .replace(
+        /^# (.*$)/gm,
+        '<strong style="display:block; font-size:1.2em; margin-top:14px;">$1</strong>',
+      )
+      .replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>")
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\*(.*?)\*/g, "<em>$1</em>")
+      .replace(/^\* (.*$)/gm, "• $1")
+      .replace(/^- (.*$)/gm, "• $1")
+      .replace(/\n/g, "<br>");
   }
 
   addMessage(text, type) {

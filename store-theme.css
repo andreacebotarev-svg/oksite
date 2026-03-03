@@ -1,0 +1,347 @@
+/* ============================================================
+   Odnoklassniki (OK.ru) Style — Parent Landing Page
+   ============================================================ */
+
+:root {
+  /* OK.ru Brand Palette */
+  --ok-orange: #EE8208;
+  --ok-orange-hover: #D97706;
+  --ok-orange-light: #FFF3E0;
+  --ok-green: #67A526;
+  --ok-green-hover: #558C1F;
+
+  /* Map to design-system tokens */
+  --primary: var(--ok-orange);
+  --primary-hover: var(--ok-orange-hover);
+  --accent: var(--ok-green);
+  --good: var(--ok-green);
+
+  /* Backgrounds */
+  --bg: #EDEDED;
+  --header-bg: #F7931E;
+  --card-bg: #FFFFFF;
+
+  /* Typography */
+  --text: #333333;
+  --p-color: #555555;
+  --muted: #999999;
+  --border: #D9D9D9;
+
+  /* Glass overrides -> solid */
+  --glass-bg: #FFFFFF;
+  --glass-border: #D9D9D9;
+
+  /* Radii — OK.ru uses generous rounding */
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 16px;
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Kill dark-mode mesh / gradients */
+body::before,
+.mesh-bg {
+  display: none !important;
+}
+
+/* ── Typography ──────────────────────────────────────────── */
+.h1, .h2, .h3, .h4 {
+  color: var(--text);
+  text-shadow: none;
+}
+.p { color: var(--p-color); }
+.small { color: var(--muted); }
+
+/* ── Header (OK-style orange bar) ────────────────────────── */
+.header {
+  background: linear-gradient(180deg, #F7931E 0%, #EE8208 100%);
+  border-bottom: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.header .pill strong { color: #fff; }
+.header .pill .small { color: rgba(255,255,255,0.85); }
+.nav-links a:not(.btn) {
+  color: #fff;
+  opacity: 0.9;
+}
+.nav-links a:not(.btn):hover { opacity: 1; }
+
+/* Header contact row */
+.contact-header-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.contact-phone-large {
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+
+/* ── Buttons ─────────────────────────────────────────────── */
+.btn-primary {
+  background: var(--ok-orange);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(238, 130, 8, 0.3);
+  transition: background 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.btn-primary:hover {
+  background: var(--ok-orange-hover);
+  box-shadow: 0 4px 12px rgba(238, 130, 8, 0.35);
+  transform: translateY(-1px);
+}
+/* Hero CTA keeps the orange */
+.hero-actions .btn-primary {
+  background: var(--ok-orange);
+  color: #fff;
+}
+.hero-actions .btn-primary:hover {
+  background: var(--ok-orange-hover);
+}
+
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: #fff;
+  border-radius: 6px;
+}
+.btn-ghost:hover {
+  border-color: var(--ok-orange);
+  color: var(--ok-orange);
+  background: var(--ok-orange-light);
+}
+
+/* ── Cards — Solid white, OK.ru-style ────────────────────── */
+.glass.card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.glass.card:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08) !important;
+}
+
+/* Kill sheen animation */
+.is-sheen::after { display: none !important; }
+
+/* ── Tool Cards (Bento grid items) ───────────────────────── */
+.tool-card {
+  background: #FAFAFA;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.tool-card:hover {
+  border-color: var(--ok-orange);
+  background: #fff;
+  box-shadow: 0 3px 10px rgba(238, 130, 8, 0.12);
+}
+.tool-card__title { color: var(--text); }
+.tool-card__desc  { color: var(--muted); }
+.tool-card__arrow { color: var(--ok-orange); }
+.tool-card__icon  { color: var(--ok-orange); }
+
+/* ── Product Catalog Cards (OK-shop style) ───────────────── */
+.product-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.product-card:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+.product-image {
+  width: 100%;
+  height: 120px;
+  border-radius: var(--r-sm);
+  background: #FAFAFA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.product-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ok-orange);
+  margin-bottom: 1rem;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.product-old-price {
+  font-size: 0.95rem;
+  color: var(--muted);
+  text-decoration: line-through;
+  font-weight: 400;
+}
+.btn-buy {
+  background: var(--ok-orange);
+  border: none;
+  color: #fff;
+  width: 100%;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.btn-buy:hover {
+  background: var(--ok-orange-hover);
+  color: #fff;
+}
+
+/* ── Form Inputs ─────────────────────────────────────────── */
+.input, textarea, input[type="text"], input[type="number"] {
+  background: #FAFAFA;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+}
+.input:focus, textarea:focus, input:focus {
+  background: #fff;
+  border-color: var(--ok-orange);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(238, 130, 8, 0.15);
+}
+.input::placeholder { color: #bbb; }
+.label {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── Kicker accent ───────────────────────────────────────── */
+.kicker {
+  color: var(--ok-orange);
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  background: #fff;
+  color: var(--text);
+}
+
+/* ── Benefits list checkmarks ────────────────────────────── */
+.benefits-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.benefits-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.benefits-list svg {
+  color: var(--ok-green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── Hero section adapt ──────────────────────────────────── */
+.hero {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ── Section backgrounds — alternate white / grey ────────── */
+.section:nth-child(even) {
+  background: #fff;
+}
+.section:nth-child(odd) {
+  background: var(--bg);
+}
+
+/* ── Review cards — keep visible (profi.ru reviews) ──────── */
+.review-card {
+  display: flex !important;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+.review-card:hover {
+  border-color: var(--ok-orange) !important;
+}
+.review-rating .star {
+  color: var(--ok-orange);
+}
+
+/* ── FAQ cards ────────────────────────────────────────────── */
+#faq .glass.card {
+  border-left: 3px solid var(--ok-orange) !important;
+}
+
+/* ── Mobile Menu ─────────────────────────────────────────── */
+.mobile-menu__content {
+  background: #fff;
+}
+.mobile-menu__content a {
+  color: var(--text);
+}
+
+/* ── Lightbox ────────────────────────────────────────────── */
+.lightbox {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+/* ── Scroll-to-top ───────────────────────────────────────── */
+.btn-top {
+  background: var(--ok-orange);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(238, 130, 8, 0.3);
+}
+.btn-top:hover {
+  background: var(--ok-orange-hover);
+}
+
+/* ── Profi.ru link ───────────────────────────────────────── */
+.profi-link {
+  color: var(--ok-orange);
+}
+.profi-link:hover {
+  color: var(--ok-orange-hover);
+}
+
+/* ── Pill badges ─────────────────────────────────────────── */
+.pill {
+  border-radius: 20px;
+  font-size: 0.85rem;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  border-color: var(--border);
+}
+
+/* ── Cert gallery thumbnails ─────────────────────────────── */
+.cert-thumbnail img {
+  border-radius: var(--r-sm);
+}
+.cert-thumbnail:hover {
+  border-color: var(--ok-orange) !important;
+  cursor: pointer;
+}

@@ -8,6 +8,41 @@
 (function () {
   'use strict';
 
+  window.demoTimer = null;
+
+  window.showDemoNotice = function() {
+    var notice = document.createElement('div');
+    notice.className = 'ok-demo-notice';
+    notice.style.position = 'fixed';
+    notice.style.top = '50%';
+    notice.style.left = '50%';
+    notice.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    notice.style.background = 'rgba(255, 255, 255, 0.95)';
+    notice.style.color = '#111';
+    notice.style.padding = '30px 40px';
+    notice.style.borderRadius = '24px';
+    notice.style.zIndex = '20000';
+    notice.style.textAlign = 'center';
+    notice.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
+    notice.style.fontFamily = 'sans-serif';
+    notice.style.pointerEvents = 'none';
+    notice.style.opacity = '0';
+    notice.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    notice.innerHTML = '<div style="font-size: 3rem; margin-bottom: 15px;">⏳</div><div style="font-weight: 600; font-size: 1.2rem;">Извините, это была лишь демонстрация</div>';
+    document.body.appendChild(notice);
+    
+    requestAnimationFrame(function() {
+      notice.style.opacity = '1';
+      notice.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
+
+    setTimeout(function() {
+      notice.style.opacity = '0';
+      notice.style.transform = 'translate(-50%, -50%) scale(0.9)';
+      setTimeout(function() { notice.remove(); }, 500);
+    }, 3000);
+  };
+
   window.openSpokePreview = function (url, title) {
     if (!url) return;
     title = title || 'Пример';
@@ -28,6 +63,13 @@
     iframe.setAttribute('title', title);
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+
+    // ✨ DEMO LIMIT: Auto-close after 10 seconds
+    if (window.demoTimer) clearTimeout(window.demoTimer);
+    window.demoTimer = setTimeout(function() {
+      closePlatformPreview();
+      if (typeof window.showDemoNotice === 'function') window.showDemoNotice();
+    }, 10000);
   };
 
   window.closePlatformPreview = function () {
@@ -43,6 +85,12 @@
     if (content) {
       content.style.transform  = '';
       content.style.transition = '';
+    }
+    
+    // Clear demo timer on manual close
+    if (window.demoTimer) {
+      clearTimeout(window.demoTimer);
+      window.demoTimer = null;
     }
   };
 

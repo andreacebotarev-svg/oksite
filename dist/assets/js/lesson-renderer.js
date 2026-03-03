@@ -387,6 +387,9 @@ class LessonRenderer {
         </div>
       </div>
       <div class="reading-body">
+        <div class="reading-instruction" style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; border-left: 4px solid var(--accent); color: var(--text-muted);">
+            <strong>Инструкция:</strong> Прочитайте текст ниже. Нажимайте на любое незнакомое слово, чтобы увидеть перевод и добавить его в свой словарь.
+        </div>
         ${processedParagraphs}
         ${this.renderDialogueOrder()}
         ${this.renderReadingQuiz()}

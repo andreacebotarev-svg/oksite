@@ -29,7 +29,7 @@ class ThemeManager {
    */
   loadTheme() {
     const saved = localStorage.getItem('eng-tutor-theme');
-    const theme = saved || 'default';
+    const theme = saved || 'kids';
     return theme;
   }
 

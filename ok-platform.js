@@ -83,22 +83,45 @@
 
     // ✨ DEMO LIMIT: Auto-close after 10 seconds
     if (window.demoTimer) clearTimeout(window.demoTimer);
+    
+    // Add a visual 'demo' badge to the modal header if not exists
+    var headerActions = modal.querySelector('.ok-modal-header');
+    if (headerActions && !headerActions.querySelector('.ok-demo-tag')) {
+        var tag = document.createElement('span');
+        tag.className = 'ok-demo-tag';
+        tag.textContent = 'DEMO';
+        tag.style.cssText = 'background: #EE8208; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 10px; font-weight: 800;';
+        headerActions.querySelector('h3').appendChild(tag);
+    }
+
     window.demoTimer = setTimeout(function() {
-      closePlatformPreview();
+      // Show notice BEFORE closing for smoother feel
       if (typeof window.showDemoNotice === 'function') window.showDemoNotice();
+      
+      // Close after a short delay to let user see notice
+      setTimeout(function() {
+        closePlatformPreview();
+      }, 1500);
     }, 10000);
 
     // ✨ AUTO-FORCE KIDS THEME for Demo Lesson (264.html)
     if (url.includes('264.html')) {
-        setTimeout(function() {
+        var forceTheme = function() {
             try {
                 var win = iframe.contentWindow;
                 if (win && win.lessonEngine && win.lessonEngine.themeManager) {
-                    if (!win.localStorage.getItem('eng-tutor-theme')) {
-                        win.lessonEngine.handleThemeSwitch('kids');
-                    }
+                    win.lessonEngine.handleThemeSwitch('kids');
+                    return true;
                 }
             } catch(e) {}
+            return false;
+        };
+        
+        // Try multiple times as iframe loads
+        var attempts = 0;
+        var themeInterval = setInterval(function() {
+            if (forceTheme() || attempts > 20) clearInterval(themeInterval);
+            attempts++;
         }, 500);
     }
   };

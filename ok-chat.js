@@ -4,16 +4,19 @@ class OKEnglishAssistant {
     this.currentImage = null;
 
     this.config = {
-      systemPrompt: `Ты — вежливый, заботливый консультант и администратор онлайн-платформы репетитора Андрея Чеботарева. 
-ТВОЯ АУДИТОРИЯ: Родители детей (школьников со 2 по 11 класс). Тебе пишут мамы и папы, поэтому общайся уважительно (на "Вы"), понятно, без лишнего молодежного сленга, делая упор на результаты ребенка: свободную речь, уверенное чтение и отличные оценки ("пятерки") в школе без стресса.
+      systemPrompt: `Ты — вежливый консультант репетитора Андрея Чеботарева. Аудитория: родители детей 2–11 класс. Общайся на "Вы", кратко (2–4 предложения максимум).
 
-ТВОЯ ЦЕЛЬ: Ответить на вопросы родителя, вызвать доверие и записать ребенка на бесплатный пробный урок-диагностику. 
+ЦЕЛЬ: Ответить → вызвать доверие → записать на бесплатный пробный урок.
 
-ТВОИ ПРАВИЛА: 
-1. ЦЕНЫ: Обязательно указывай, что первый урок (диагностика уровня) — АБСОЛЮТНО БЕСПЛАТНО! Разовый урок стоит 1530₽ (1800₽ без пакета), Пакет из 8 уроков — 1275₽ за урок. Существуют мини-группы за 1000₽/урок.
-2. ВНИМАНИЕ К ДЕТАЛЯМ: Родителей волнует снятие "языкового барьера", исправление плохих оценок в школе, интерес ребенка к языку, отсутствие скучной зубрежки. У нас есть интерактивная платформа и тренажеры, о которых стоит упоминать.
-3. ПРОМОКОД: Напомни, что по промокоду "2026" действует скидка 15% на первые 3 месяца.
-4. КАК ЗАПИСАТЬ: Если родитель готов записаться, ПРОСТО ПОПРОСИ ЕГО НАПИСАТЬ СВОЙ НОМЕР ТЕЛЕФОНА ИЛИ TELEGRAM ПРЯМО ТУТ В ЧАТЕ. Скажи: "Напишите, пожалуйста, Ваш номер телефона или ник в Telegram, и Андрей лично свяжется с Вами для выбора удобного времени!". Система чата сама распознает контакт.`,
+ПРАВИЛА:
+1. Первый урок — БЕСПЛАТНО. Разовый — 1530₽, пакет 8 уроков — 1275₽/урок, мини-группы — 1000₽.
+2. Промокод "2026" → скидка 15% на 3 месяца.
+3. Для записи проси номер телефона или Telegram прямо в чате.
+4. ОТВЕЧАЙ КРАТКО! Не больше 3–4 предложений.
+
+ПРИМЕР ОТВЕТА:
+Родитель: Сколько стоят занятия?
+Ты: Первый урок — бесплатная диагностика! 🎁 Далее: 1275₽/урок в пакете из 8 или 1530₽ разово. По промокоду **2026** — ещё минус 15%. Записать?`,
     };
 
     this.suggestions = {
@@ -35,11 +38,49 @@ class OKEnglishAssistant {
   init() {
     this.createUI();
     this.bindEvents();
-    setTimeout(() => {
-      if (this.elements && this.elements.window && !this.elements.window.classList.contains("active")) {
-        this.toggleChat(true);
-      }
-    }, 4000);
+    this.initFormIdleWatcher();
+  }
+
+  // Open chat only when user is stuck on the form for 3.5s without typing
+  initFormIdleWatcher() {
+    const form = document.getElementById('leadForm');
+    if (!form) return;
+
+    let idleTimer = null;
+    let alreadyTriggered = false;
+    const IDLE_MS = 3500;
+
+    const inputs = form.querySelectorAll('input:not([type=hidden]):not([type=checkbox]), textarea');
+
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        if (alreadyTriggered) return;
+        // Start idle timer when user focuses a field
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          if (this.elements && this.elements.window && !this.elements.window.classList.contains('active')) {
+            this.toggleChat(true);
+            alreadyTriggered = true;
+          }
+        }, IDLE_MS);
+      });
+
+      // Reset timer on every keystroke — they're actively typing
+      input.addEventListener('input', () => {
+        if (alreadyTriggered) return;
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(() => {
+          if (this.elements && this.elements.window && !this.elements.window.classList.contains('active')) {
+            this.toggleChat(true);
+            alreadyTriggered = true;
+          }
+        }, IDLE_MS);
+      });
+
+      input.addEventListener('blur', () => {
+        clearTimeout(idleTimer);
+      });
+    });
   }
 
   createUI() {
@@ -589,6 +630,7 @@ class OKEnglishAssistant {
           model: geoConfig.model,
           messages: history,
           stream: true,
+          max_tokens: 250,
         }),
       });
 

@@ -575,7 +575,7 @@ class OKEnglishAssistant {
               const data = JSON.parse(dataStr);
               const delta = data.choices[0]?.delta?.content || "";
               if (delta) {
-                await new Promise((r) => setTimeout(r, 30)); // Имитация скорости печати человека (задержка каждого токена)
+                await new Promise((r) => setTimeout(r, 60)); // Имитация скорости печати человека (задержка каждого токена)
                 aiMessage += delta;
                 messageElement.innerHTML = this.formatMessage(aiMessage);
                 this.elements.messages.scrollTop =

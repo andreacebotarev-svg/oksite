@@ -11,24 +11,41 @@
   window.demoTimer = null;
 
   window.showDemoNotice = function() {
+    // Remove existing notice if any
+    var existing = document.querySelector('.ok-demo-notice');
+    if (existing) existing.remove();
+
     var notice = document.createElement('div');
     notice.className = 'ok-demo-notice';
-    notice.style.position = 'fixed';
-    notice.style.top = '50%';
-    notice.style.left = '50%';
-    notice.style.transform = 'translate(-50%, -50%) scale(0.9)';
-    notice.style.background = 'rgba(255, 255, 255, 0.95)';
-    notice.style.color = '#111';
-    notice.style.padding = '30px 40px';
-    notice.style.borderRadius = '24px';
-    notice.style.zIndex = '20000';
-    notice.style.textAlign = 'center';
-    notice.style.boxShadow = '0 20px 50px rgba(0,0,0,0.3)';
-    notice.style.fontFamily = 'sans-serif';
-    notice.style.pointerEvents = 'none';
-    notice.style.opacity = '0';
-    notice.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-    notice.innerHTML = '<div style="font-size: 3rem; margin-bottom: 15px;">⏳</div><div style="font-weight: 600; font-size: 1.2rem;">Извините, это была лишь демонстрация</div>';
+    notice.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        background: #fff;
+        color: #111;
+        padding: 40px;
+        border-radius: 32px;
+        z-index: 200000;
+        text-align: center;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 100px rgba(238, 130, 8, 0.2);
+        font-family: -apple-system, system-ui, sans-serif;
+        pointer-events: none;
+        opacity: 0;
+        transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        min-width: 320px;
+        border: 1px solid rgba(238, 130, 8, 0.1);
+    `;
+    
+    notice.innerHTML = `
+        <div style="font-size: 80px; filter: drop-shadow(0 0 20px rgba(255, 165, 0, 0.2));">⏳</div>
+        <div style="font-weight: 800; font-size: 24px; color: #EE8208; line-height: 1.2;">ДЕМОНСТРАЦИЯ ЗАКРЫТА</div>
+        <div style="font-weight: 500; font-size: 16px; color: #666;">Извините, это была лишь демонстрация возможностей платформы.</div>
+    `;
     document.body.appendChild(notice);
     
     requestAnimationFrame(function() {
@@ -38,9 +55,9 @@
 
     setTimeout(function() {
       notice.style.opacity = '0';
-      notice.style.transform = 'translate(-50%, -50%) scale(0.9)';
-      setTimeout(function() { notice.remove(); }, 500);
-    }, 3000);
+      notice.style.transform = 'translate(-50%, -50%) scale(0.9) translateY(20px)';
+      setTimeout(function() { if (notice.parentNode) notice.remove(); }, 600);
+    }, 4000);
   };
 
   window.openSpokePreview = function (url, title) {
@@ -70,6 +87,20 @@
       closePlatformPreview();
       if (typeof window.showDemoNotice === 'function') window.showDemoNotice();
     }, 10000);
+
+    // ✨ AUTO-FORCE KIDS THEME for Demo Lesson (264.html)
+    if (url.includes('264.html')) {
+        setTimeout(function() {
+            try {
+                var win = iframe.contentWindow;
+                if (win && win.lessonEngine && win.lessonEngine.themeManager) {
+                    if (!win.localStorage.getItem('eng-tutor-theme')) {
+                        win.lessonEngine.handleThemeSwitch('kids');
+                    }
+                }
+            } catch(e) {}
+        }, 500);
+    }
   };
 
   window.closePlatformPreview = function () {
